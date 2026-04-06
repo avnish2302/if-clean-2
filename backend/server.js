@@ -9,8 +9,8 @@ dotenv.config()
 const app = express()
 const upload = multer({limits : {fileSize: 5 * 1024 * 1024}})
 
-app.use(cors())               // allows frontend to call backend
-app.use(express.json())       // parse JSON body
+app.use(cors())                                              // allows frontend to call backend
+app.use(express.json())                                      // parse JSON body
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY })  // initialize gemini with API key
 
@@ -72,14 +72,14 @@ app.post("/analyze-cleanliness", upload.single("image"), async (req, res) => {
           }
         }
         `
-        const response = await ai.models.generateContent({         // AI call
+        const response = await ai.models.generateContent({                         // AI call
           model: "gemini-2.5-flash",
           contents: [
                     prompt,
                     {
                       inlineData: {
                         mimeType: file.mimetype,
-                        data: file.buffer.toString("base64"),      // Image to converted to base 64
+                        data: file.buffer.toString("base64"),                      // Image to converted to base 64
                       }
                     }
                     ]
@@ -87,7 +87,7 @@ app.post("/analyze-cleanliness", upload.single("image"), async (req, res) => {
 
         const text = response.text
 
-        let parsed = {                         // default object (Safety net). If AI fails we still return something safe
+        let parsed = {                                                              // default object (Safety net). If AI fails we still return something safe
           scene: "other",
           valid: false,
           reason: "Parsing failed",
@@ -96,8 +96,8 @@ app.post("/analyze-cleanliness", upload.single("image"), async (req, res) => {
         }
 
         try {
-            let cleanText = text.replace(/```json/g, "").replace(/```/g, "").trim()      // JSON Extraction. Removes markdown formatting
-            const match = cleanText.match(/\{[\s\S]*\}/)                                 // extract JSON from text using regex
+            let cleanText = text.replace(/```json/g, "").replace(/```/g, "").trim() // JSON Extraction. Removes markdown formatting
+            const match = cleanText.match(/\{[\s\S]*\}/)                            // extract JSON from text using regex
 
             if (match) {
               try {
@@ -111,29 +111,29 @@ app.post("/analyze-cleanliness", upload.single("image"), async (req, res) => {
           console.log("RAW AI RESPONSE:\n", text)
         }
 
-        parsed.valid = parsed.valid ?? true                  // ensures missing values don't break app
+        parsed.valid = parsed.valid ?? true                                         // ensures missing values don't break app
         parsed.scene = parsed.scene || "other"
         parsed.reason = parsed.reason || ""
-        parsed.cleanliness = parsed.cleanliness || {         // Guarantees cleanliness object exists
+        parsed.cleanliness = parsed.cleanliness || {                                // Guarantees cleanliness object exists
           status: "unknown",
           confidence: 0,
           issues: [],
         }
 
-        parsed.cleanliness.issues = Array.isArray(parsed.cleanliness.issues)   // ensures issues is always array
+        parsed.cleanliness.issues = Array.isArray(parsed.cleanliness.issues)        // ensures issues is always array
         ? parsed.cleanliness.issues
         : []
 
         parsed.quality = parsed.quality || {}
 
-        const { blurry, dark, zoomed } = parsed.quality                        // extracts quality flags
+        const { blurry, dark, zoomed } = parsed.quality                             // extracts quality flags
 
         if (blurry || dark || zoomed) {
           parsed.valid = false
           parsed.reason = "Poor image quality"
         }
 
-        if (parsed.scene === "other") {                                        // Reject : screenshots, outdoor, irrelevant images
+        if (parsed.scene === "other") {                                             // Reject : screenshots, outdoor, irrelevant images
           parsed.valid = false
           if (!parsed.reason) {
             parsed.reason = "Unsupported scene"
@@ -167,9 +167,9 @@ app.post("/analyze-cleanliness", upload.single("image"), async (req, res) => {
 
         parsed.alert = alert
 
-        res.json(parsed)                                                       // sends result to frontend
+        res.json(parsed)                                                            // sends result to frontend
 
-        console.log("RESULT :", parsed)                                        // debug logging
+        console.log("RESULT :", parsed)                                             // debug logging
     } catch (err) {
         console.error("SERVER ERROR:", err)
         res.status(500).json({error: "Request failed (API issue / server error)"})
