@@ -16,7 +16,7 @@ export default function App() {
   const status = result.cleanliness?.status;
   const confidence = result.cleanliness?.confidence ?? 0;
 
-  // 🟢 CLEAN
+  // CLEAN
   if (status === "clean") {
     return (
       <div>
@@ -29,7 +29,7 @@ export default function App() {
     );
   }
 
-  // 🔴 DIRTY
+  // DIRTY
   if (status === "dirty") {
     return (
       <div>
@@ -56,7 +56,7 @@ export default function App() {
     );
   }
 
-  // 🟡 UNKNOWN
+  // UNKNOWN
   return (
     <div>
       <p className="text-yellow-400 font-semibold">Uncertain</p>
