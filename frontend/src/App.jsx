@@ -134,7 +134,7 @@ export default function App() {
             onClick={handleSubmit}
             disabled={loading || !image}
             className={`flex-1 py-2 rounded-lg font-medium transition flex items-center justify-center gap-2
-                        bg-white text-black hover:bg-gray-200
+                        bg-white text-black hover:bg-gray-200 cursor-pointer
                         disabled:bg-gray-600 disabled:text-gray-300
                         disabled:cursor-not-allowed disabled:opacity-70`}
           >
@@ -162,7 +162,7 @@ export default function App() {
                 fileInputRef.current.value = ""
               }
             }}
-            className="px-4 py-2 rounded-lg font-medium bg-red-500 hover:bg-red-600"
+            className="px-4 py-2 rounded-lg font-medium bg-red-500 hover:bg-red-600 cursor-pointer"
           >
             Reset
           </button>
