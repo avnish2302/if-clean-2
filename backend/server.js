@@ -14,9 +14,7 @@ app.use(express.json())                                      // parse JSON body
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY })  // initialize gemini with API key
 
-app.get("/", (req, res) => {
-  res.json({ message: "Hit root URL" })
-})
+app.get("/", (req, res) => {res.json({ message: "Hit root URL" })})
 
 app.post("/analyze-cleanliness", upload.single("image"), async (req, res) => {
     try {
